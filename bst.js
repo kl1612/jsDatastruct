@@ -30,11 +30,11 @@ class bst{
         }else if(element > y.key){
             y.right = new node(element, y);
             insertedAtLeft = false;
-            console.log("inseted node as right child of ", y.key);
+            console.log("inserted node as right child of ", y.key);
         }else{
             y.left = new node(element, y);
             insertedAtLeft = true;
-            console.log("inseted node as left child of ", y.key);
+            console.log("inserted node as left child of ", y.key);
         }
     }
     search(key, node = this.root){
@@ -133,6 +133,8 @@ class bst{
             this.inorderTraversal(node.left);
             console.log(node);
             this.inorderTraversal(node.right);
+        }else{
+            return;
         }
    } 
 }
@@ -157,18 +159,39 @@ class avl extends bst{
     getBalance(node){
         return this.getHeight(node.right)-this.getHeight(node.left); //positive means right heavy 
     }
-    /*update(node){ //procedure for the just inserted node
-        this.getHeight(root, true);
-        return this.getBalance(node);
-    }*/
+    findFirstUnbalanced(node){
+        if(Math.abs(this.getBalance(node.parent)) == 2){
+            return node.parent;
+        }else{
+            if(node!=null){
+                return this.findFirstUnbalanced(node.parent);
+            }else{
+                console.log("no unbalanced nodes");
+            }
+        }
+    }
     balance(node){
-
+        if(this.getBalance(node) == -2){ //left heavy
+            if(this.getBalance(node.left) <= 0){
+                //left left case
+            }else{
+                //left right case
+            }
+        }
+        if(this.getBalance(node) == 2){ //right heavy
+            if(this.getBalance(node.right) >= 0){
+                //right right
+            }else{
+                //right left
+            }
+        }
+        //no need to rebalance if balance is +-1 or 0
     }
     insert(element){
         super.insert(element);
-        this.getHeight(this.root); //updates all node heights
+        this.getHeight(this.root, true); //updates all node heights
         if(super.insertedAtLeft){
-            //this.update(super.y.left);        
+                   
         }else{
             //this.update(super.y.right);
         }
@@ -213,6 +236,7 @@ class avl extends bst{
         }else{
             this.root = y;
         }
+        return y;
     }
 
 }
