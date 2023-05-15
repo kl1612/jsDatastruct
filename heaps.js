@@ -1,5 +1,5 @@
 class heap{
-    //lqwoto e 2i+1 dqsnoto 2i+2
+    //left is 2i+1 right 2i+2
     constructor(arr, comparator){
         this.arr = arr;
         this.comparator = comparator;
@@ -7,7 +7,7 @@ class heap{
     }
     
     heapify(i){
-        //waji ako towa nadolu ot lqwoto ili dqsnoto na arr[i] e max heap
+        //only if the node on the left or right of arr[i] is a heap
         let l = i*2+1;
         let r = i*2+2;
         let largest = -1;
@@ -21,7 +21,7 @@ class heap{
         }
         if(largest != i){
             [this.arr[i], this.arr[largest]] = [this.arr[largest], this.arr[i]];
-            //vikame funkciqta ot indexa na smeneniq element
+            //calling the function from the changed element
             this.heapify(largest);
         }
     }
