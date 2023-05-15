@@ -174,15 +174,21 @@ class avl extends bst{
         if(this.getBalance(node) == -2){ //left heavy
             if(this.getBalance(node.left) <= 0){
                 //left left case
+                return this.rotateRight(node);
             }else{
                 //left right case
+                this.rotateLeft(node.left);
+                return this.rotateRight(node);
             }
         }
         if(this.getBalance(node) == 2){ //right heavy
             if(this.getBalance(node.right) >= 0){
                 //right right
+                return this.rotateLeft(node);
             }else{
                 //right left
+                this.rotateRight(node.right);
+                return this.rotateLeft(node);
             }
         }
         //no need to rebalance if balance is +-1 or 0
@@ -238,6 +244,5 @@ class avl extends bst{
         }
         return y;
     }
-
 }
 
