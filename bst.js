@@ -16,7 +16,6 @@ class bst{
     insert(element){
         let x = this.root;
         let y = null;
-        let insertedAtLeft = null; //used for avl properties
         while(x != null){
             y = x;
             if(element < x.key){
@@ -29,12 +28,12 @@ class bst{
             this.root = new node(element);
         }else if(element > y.key){
             y.right = new node(element, y);
-            insertedAtLeft = false;
-            console.log("inserted node as right child of ", y.key);
+            console.log("new node ", y.right.key);
+            return y.right;
         }else{
             y.left = new node(element, y);
-            insertedAtLeft = true;
-            console.log("inserted node as left child of ", y.key);
+            console.log("new node ", y.left.key);
+            return y.left;
         }
     }
     search(key, node = this.root){
@@ -128,13 +127,15 @@ class bst{
         y.left.parent = y;
         return node;
     }
-    inorderTraversal(node){
-        if(node != null){
-            this.inorderTraversal(node.left);
-            console.log(node);
-            this.inorderTraversal(node.right);
-        }else{
+    inorderTraversal(node = this.root){
+        if(node == null || node == undefined){
+            console.log("null");
             return;
+        }else{
+        if(node.left != null)this.inorderTraversal(node.left);
+        console.log(node.key);
+        if(node.right != null)this.inorderTraversal(node.right);
+        //return;
         }
    } 
 }
@@ -144,9 +145,10 @@ class avl extends bst{
         super(root);
     }
     getHeight(node, clean=false){
-        if(node == null)return -1;
-        if(node.heigth != null && clean == false){
-            return node.heigth;
+        if(node == null) return -1;
+        //console.log("getHeight called from ", node.key);
+        if(node.heigth != null && clean == false){ 
+            return node.heigth; //reuses height value if you dont want a clean compute of the value
         }else{
             if(clean){ //makes recursive calls clean if the first call was clean
                 node.heigth = 1+Math.max(this.getHeight(node.left, true), this.getHeight(node.right, true));
@@ -157,9 +159,15 @@ class avl extends bst{
         }
     }
     getBalance(node){
-        return this.getHeight(node.right)-this.getHeight(node.left); //positive means right heavy 
+        if(node == null){
+            return 0;
+        }         
+        return this.getHeight(node.right)-this.getHeight(node.left); //positive is right heavy 
     }
     findFirstUnbalanced(node){
+        if(node == this.root){
+            return Math.abs(this.getBalance(node)) == 2 ? node : 0; //0 means no unbalanced nodes 
+        }
         if(Math.abs(this.getBalance(node.parent)) == 2){
             return node.parent;
         }else{
@@ -167,6 +175,7 @@ class avl extends bst{
                 return this.findFirstUnbalanced(node.parent);
             }else{
                 console.log("no unbalanced nodes");
+                return;
             }
         }
     }
@@ -191,16 +200,11 @@ class avl extends bst{
                 return this.rotateLeft(node);
             }
         }
-        //no need to rebalance if balance is +-1 or 0
     }
     insert(element){
-        super.insert(element);
+        let inserted = super.insert(element);
         this.getHeight(this.root, true); //updates all node heights
-        if(super.insertedAtLeft){
-                   
-        }else{
-            //this.update(super.y.right);
-        }
+        this.balance(this.findFirstUnbalanced(inserted));
     }
     rotateRight(x){
         let y = x.left;
