@@ -101,7 +101,6 @@ class bst{
     delete(node){
         if(node.left == null && node.right == null){ //deleting a leaf node
             this.replace(node, null);
-            console.log("mahnah listo")
             return node;
         }
         if(node.left == null || node.right == null){ //deleting node /w one child
@@ -112,7 +111,6 @@ class bst{
                 child = node.left;
             }
             this.replace(node, child);
-            console.log("mahnah s eno 4awe");
             return node;
         }
         //if the node has two children
@@ -144,18 +142,17 @@ class avl extends bst{
     constructor(root){
         super(root);
     }
-    getHeight(node, clean=false){
-        if(node == null) return -1;
-        //console.log("getHeight called from ", node.key);
-        if(node.heigth != null && clean == false){ 
-            return node.heigth; //reuses height value if you dont want a clean compute of the value
+    getHeight(node){
+        if(node == null){
+            //console.log("null getheight");
+            return -1;
+        }
+        //console.log(clean, " getHeight called from ", node.key);
+        if(node.heigth != null){ 
+            return node.heigth; //reuses old value if you dont want a clean compute
         }else{
-            if(clean){ //makes recursive calls clean if the first call was clean
-                node.heigth = 1+Math.max(this.getHeight(node.left, true), this.getHeight(node.right, true));
-                return node.heigth;
-            }
             node.heigth = 1+Math.max(this.getHeight(node.left), this.getHeight(node.right));
-            return node.heigth; 
+            return node.heigth;
         }
     }
     getBalance(node){
@@ -203,7 +200,13 @@ class avl extends bst{
     }
     insert(element){
         let inserted = super.insert(element);
-        this.getHeight(this.root, true); //updates all node heights
+        let i = inserted;
+        while(i!=null){ //trickles down to the tree root and sets heights to null so they can be recomputed
+            i.heigth = null;
+            //console.log("set ", i.key, " height to ", i.heigth);
+            i = i.parent;
+        }
+        this.getHeight(this.root); //updates all node heights
         this.balance(this.findFirstUnbalanced(inserted));
     }
     rotateRight(x){
@@ -249,4 +252,3 @@ class avl extends bst{
         return y;
     }
 }
-
