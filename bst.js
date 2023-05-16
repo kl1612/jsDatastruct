@@ -141,6 +141,7 @@ class bst{
 class avl extends bst{
     constructor(root){
         super(root);
+        console.log("new tree with root ", this.root.key);
     }
     getHeight(node){
         if(node == null){
@@ -170,9 +171,6 @@ class avl extends bst{
         }else{
             if(node!=null){
                 return this.findFirstUnbalanced(node.parent);
-            }else{
-                console.log("no unbalanced nodes");
-                return;
             }
         }
     }
@@ -252,3 +250,4 @@ class avl extends bst{
         return y;
     }
 }
+
