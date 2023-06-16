@@ -27,11 +27,9 @@ class bst{
             this.root = new node(element);
         }else if(element > y.key){
             y.right = new node(element, y);
-            console.log("new node ", y.right.key);
             return y.right;
         }else{
             y.left = new node(element, y);
-            console.log("new node ", y.left.key);
             return y.left;
         }
     }
@@ -85,56 +83,42 @@ class bst{
         }
         return y;
     }
-    replace(x, y){ //source of problem maybe
+    replace(x, y){ 
         if(x.parent == null){
             this.root = y;
         }else if(x == x.parent.left){
             x.parent.left = y;
-            console.log("92 red");
         }else{
-            console.log("95 red");
             x.parent.right = y;
-            console.log(x.parent.right);
         }
-        if(y != null && x.parent != y){ //after the && only for testing 
+        if(y != null && x.parent != y){ 
             y.parent = x.parent;
         }
     }
-    remove(node){ //delete is a reserved keyword?
+
+    remove(node){ 
         if(node.left == null && node.right == null){ //deleting a leaf node
+            console.log("102");
             this.replace(node, null);
-            console.log("removed leaf node ", node.key);
             return null;
         }
         if(node.left == null || node.right == null){ //deleting node /w one child
             let child = null;
+            console.log("106");
             if(node.left == null){
                 child = node.right;
             }else{
                 child = node.left;
             }
             this.replace(node, child);
-            console.log("removed node w 1 child ", node.key);
             return child;
         }
-        //if the node has two children 
+        //if the node has two children
         let y = this.successor(node);
         node.key = y.key;
-        console.log("called a remove w 2 children ", node.key); 
         return this.remove(y); //can and sometimes should get recursive
-        /*if(y.parent != node){
-            this.replace(y, y.right);
-            y.right = node.right;
-            y.right.parent = y;
-        }
-        this.replace(node, y);
-        y.left = node.left;
-        y.left.parent = y;
-        return y;
-        node.key = y.key;
-        console.log("recursive call for remove w 2 children");
-        return this.remove(y);*/
     }
+
     inorderTraversal(node = this.root){
         if(node == null || node == undefined){
             console.log("null");
@@ -150,18 +134,15 @@ class bst{
 class avl extends bst{
     constructor(root){
         super(root);
-        console.log("new tree with root ", this.root.key);
     }
     getHeight(node){
         if(node == null){
             return -1;
         }
-        //console.log("getHeight called from ", node.key);
         if(node.height != null){ 
             return node.height;
         }else{
             return node.height = 1+Math.max(this.getHeight(node.left), this.getHeight(node.right));
-            //return node.height;
         }
     }
     getBalance(node){
@@ -171,6 +152,9 @@ class avl extends bst{
         return this.getHeight(node.right)-this.getHeight(node.left); //positive is right heavy 
     }
     findFirstUnbalanced(node){
+        if(node == null){
+            return;
+        }
         if(node == this.root){
             return Math.abs(this.getBalance(node)) == 2 ? node : 0; //0 means no unbalanced nodes 
         }
@@ -195,23 +179,25 @@ class avl extends bst{
         }
         if(this.getBalance(node) == 2){ //right heavy
             if(this.getBalance(node.right) >= 0){
-                //right right
+                //right right case
                 return this.rotateLeft(node);
             }else{
-                //right left
+                //right left case
                 this.rotateRight(node.right);
                 return this.rotateLeft(node);
             }
         }
     }
     update(node){
+        if(node == null){
+            return;
+        }
         let i = node;
-        while(i != null){ //trickles down to the tree root and sets heights to null so they can be recomputed
+        while(i != null){ //trickles down to the tree root while setting heights to null so they can be recomputed
             i.height = null;
-            //console.log(i.parent);
             i = i.parent;
         }
-        this.getHeight(this.root); //updates all node heights
+        this.getHeight(this.root); //updates all node heights 
         this.balance(this.findFirstUnbalanced(node));
     }
     insert(element){
@@ -219,26 +205,22 @@ class avl extends bst{
         this.update(inserted);
         return inserted;
     }
-    superRemove(node){
+    superremove(node){
         super.remove(node);
     }
     remove(node){
-        let removed = super.remove(node); //actually the node in the place of the removed one
-        //console.log("in place of removed.right ", removed.right);
-        //console.log("removed parent ", removed.parent.key);
-        //this.update(removed);
+        let removed = super.remove(node); //actually the node in the place of the removed one or null for leaf node removals
+        if(removed != null) this.update(removed); else this.update(node.parent);
+        this.update(removed);
         return removed;
     }
     rotateRight(node){
-        console.log("rortight ", node.key);
-        console.log("x left left key ",node.left.left.key);
         let x = node;
         let y = x.left;
         let p = x.parent;
         if(y.right != null){
             x.left = y.right;
             x.left.parent = x;
-            console.log("red 236 ", y.right.parent.key);
         }else{
             x.left = null;
         }
@@ -281,4 +263,3 @@ class avl extends bst{
         return y;
     }
 }
-
