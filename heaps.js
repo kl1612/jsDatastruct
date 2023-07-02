@@ -33,7 +33,6 @@ class heap{
     sort(){
         //O:(n*log n)
         let result = []
-        this.build_heap();
         while(this.arr.length){
             [this.arr[0], this.arr[this.arr.length-1]] = [this.arr[this.arr.length-1], this.arr[0]];
             result.push(this.arr.pop())
